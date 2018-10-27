@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">TwitterClient</string>
+    <string name="textview">TextView</string>
+    <string name="drawer_open">Drawer Open</string>
+    <string name="drawer_close">Drawer Close</string>
+
+</resources>
