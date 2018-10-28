@@ -1,5 +1,6 @@
 package usth.edu.vn.twitterclient;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -11,11 +12,13 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 
 
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import static android.widget.Toast.LENGTH_SHORT;
 
@@ -67,7 +70,26 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-//the bar left clicked
+//basically implement a chord to check the user authentication
+    @Override
+    protected void onStart() {
+        FirebaseUser currentUser= mAuth.getCurrentUser();
+        //the user is not authenticated
+        if(currentUser==null){
+            SendUserToLoginActivity();
+        }
+        super.onStart();
+    }
+
+    private void SendUserToLoginActivity() {
+        Intent loginIntent =new Intent(MainActivity.this,LoginActivity.class);
+        loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(loginIntent);
+    }
+
+
+
+    //the bar left clicked
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(actionBarDrawerToggle.onOptionsItemSelected(item)) {
