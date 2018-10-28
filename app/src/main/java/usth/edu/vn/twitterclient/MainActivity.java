@@ -15,6 +15,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import static android.widget.Toast.LENGTH_SHORT;
 
 
@@ -27,11 +29,15 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView postList;
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private Toolbar mToolbar;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        mAuth=FirebaseAuth.getInstance();
 
         navigationView2= findViewById(R.id.nav_bottom) ;
 
