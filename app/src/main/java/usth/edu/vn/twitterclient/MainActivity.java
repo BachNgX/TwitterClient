@@ -125,6 +125,10 @@ public class MainActivity extends AppCompatActivity {
             case R.id.nav_help:
                 Toast.makeText(this, "Help Center", LENGTH_SHORT).show();
                 break;
+            case R.id.nav_logout:
+                mAuth.signOut();
+                SendUserToLoginActivity();
+                break;
         }
     }
 }

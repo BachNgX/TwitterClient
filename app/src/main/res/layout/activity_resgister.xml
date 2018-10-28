@@ -19,7 +19,7 @@
         android:inputType="textEmailAddress" />
 
     <EditText
-        android:id="@+id/login_password"
+        android:id="@+id/register_password"
         android:layout_width="match_parent"
         android:layout_height="61dp"
         android:layout_alignParentStart="true"
@@ -37,7 +37,7 @@
         android:id="@+id/register_confirm_password"
         android:layout_width="match_parent"
         android:layout_height="63dp"
-        android:layout_alignStart="@+id/login_password"
+        android:layout_alignStart="@+id/register_password"
         android:layout_alignParentTop="true"
 
         android:layout_marginStart="1dp"
@@ -75,5 +75,5 @@
         android:layout_marginStart="113dp"
         android:layout_marginLeft="113dp"
         android:layout_marginTop="24dp"
-        app:srcCompat="@drawable/logo" />
+        app:srcCompat="@drawable/twitter" />
 </RelativeLayout>
