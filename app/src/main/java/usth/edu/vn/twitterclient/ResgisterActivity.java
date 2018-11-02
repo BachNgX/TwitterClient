@@ -30,15 +30,14 @@ public class ResgisterActivity extends AppCompatActivity {
 
         mAuth=FirebaseAuth.getInstance();
 
-        userEmail=findViewById(R.id.register_email);
-        userPassword=findViewById(R.id.register_password);
+        userEmail= findViewById(R.id.register_email);
+        userPassword=findViewById(R.id.login_password);
         userConfirmPassword=findViewById(R.id.register_confirm_password);
         createAccountButton= findViewById(R.id.register_create_account);
         loadingBar= new ProgressDialog(this);
 
         //authenticate the user
-        createAccountButton.setOnClickListener(
-                new View.OnClickListener() {
+        createAccountButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 CreateNewAccount();
@@ -76,7 +75,7 @@ public class ResgisterActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if(task.isSuccessful()){
-                                sendUserToSetupActivity();
+                                //sendUserToSetupActivity();
                                 Toast.makeText(ResgisterActivity.this
                                         ," you are authenticated successfull...",Toast.LENGTH_SHORT).show();
                                 loadingBar.dismiss();
@@ -95,13 +94,11 @@ public class ResgisterActivity extends AppCompatActivity {
     }
 
 
-
-
     private void sendUserToSetupActivity() {
         //send user setup activity
         Intent setupIntent = new Intent(ResgisterActivity.this,SetupActivity.class);
         setupIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(setupIntent);
-        finish();
+        //finish();
     }
 }

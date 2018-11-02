@@ -21,8 +21,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private Button loginButton;
     private EditText userEmail,userPassword;
-    private TextView needNewAcountLink;
-    private ProgressDialog loadingBar;
+    private TextView needNewAccountLink;
+    private ProgressDialog loadingBar2;
 
     private FirebaseAuth mAuth;
 
@@ -34,16 +34,15 @@ public class LoginActivity extends AppCompatActivity {
 
         mAuth=FirebaseAuth.getInstance();
 
-        needNewAcountLink= findViewById(R.id.register_account_link);
+        needNewAccountLink= findViewById(R.id.register_account_link);
         userEmail= findViewById(R.id.login_email);
-        userPassword=  findViewById(R.id.register_password);
+        userPassword=  findViewById(R.id.login_password);
         loginButton =  findViewById(R.id.login_button);
 
-        needNewAcountLink.setOnClickListener(new View.OnClickListener() {
-
+        needNewAccountLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SendUserToRegisterActivity();
+                sendUserToRegisterActivity();
             }
         });
 
@@ -52,40 +51,40 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 allowingUserToLogin();
-
             }
         });
     }
+
 
     private void allowingUserToLogin() {
         String email= userEmail.getText().toString();
         String password= userPassword.getText().toString();
         if(TextUtils.isEmpty(email)){
-            Toast.makeText(this,"Please write your email...",Toast.LENGTH_SHORT);
+            Toast.makeText(this,"Please write your email...",Toast.LENGTH_SHORT).show();
         }
         else if(TextUtils.isEmpty(password)){
-            Toast.makeText(this,"Please write your password...",Toast.LENGTH_SHORT);
+            Toast.makeText(this,"Please write your password...",Toast.LENGTH_SHORT).show();
         }
         else{
 
-            loadingBar.setTitle("Login");
-            loadingBar.setMessage("Please wait,  While we are allowing you into your account..");
-            loadingBar.show();
-            loadingBar.setCanceledOnTouchOutside(true);
+//            loadingBar2.setTitle("Login");
+//            loadingBar2.setMessage("Please wait,  While we are allowing you login into your account..");
+//            loadingBar2.show();
+//            loadingBar2.setCanceledOnTouchOutside(true);
 
             mAuth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if(task.isSuccessful()){
-                                SendUserToMainActivity();
-                                Toast.makeText(LoginActivity.this,"you  are logined successfully...",Toast.LENGTH_SHORT);
-                                loadingBar.dismiss();
+                                sendUserToMainActivity();
+                                Toast.makeText(LoginActivity.this,"you  are logined successfully...",Toast.LENGTH_SHORT).show();
+                                //loadingBar2.dismiss();
                             }
                             else{
                                 String message =task.getException().getMessage();
-                                Toast.makeText(LoginActivity.this,"Error Occured"+message,Toast.LENGTH_SHORT);
-                                loadingBar.dismiss();
+                                Toast.makeText(LoginActivity.this,"Error Occured"+message,Toast.LENGTH_SHORT).show();
+                                //loadingBar2.dismiss();
                             }
                         }
                     });
@@ -93,7 +92,7 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    private void SendUserToMainActivity() {
+    private void sendUserToMainActivity() {
         Intent mainIntent= new Intent(LoginActivity.this,MainActivity.class);
          //add the validation that is  by pressing  the back button, not allow to come back login activity unless logout
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -102,7 +101,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-    private void SendUserToRegisterActivity() {
+    private void sendUserToRegisterActivity() {
         Intent registerIntent = new Intent(LoginActivity.this,ResgisterActivity.class);
         startActivity(registerIntent);
         //finish();

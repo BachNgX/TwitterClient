@@ -64,7 +64,7 @@
         android:inputType="textEmailAddress" />
 
     <EditText
-        android:id="@+id/register_password"
+        android:id="@+id/login_password"
         android:layout_width="match_parent"
         android:layout_height="61dp"
         android:layout_alignParentStart="true"

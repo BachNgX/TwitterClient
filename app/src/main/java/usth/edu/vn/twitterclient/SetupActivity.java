@@ -11,6 +11,7 @@ public class SetupActivity extends AppCompatActivity {
 
     private EditText userName, fullName, countryName;
     private Button saveInformationButton;
+
     private CircleImageView profileImage;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
