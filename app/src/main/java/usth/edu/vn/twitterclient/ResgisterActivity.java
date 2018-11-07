@@ -75,7 +75,7 @@ public class ResgisterActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if(task.isSuccessful()){
-                                //sendUserToSetupActivity();
+                                sendUserToSetupActivity();
                                 Toast.makeText(ResgisterActivity.this
                                         ," you are authenticated successfull...",Toast.LENGTH_SHORT).show();
                                 loadingBar.dismiss();

@@ -22,6 +22,11 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import static android.widget.Toast.LENGTH_SHORT;
 
@@ -38,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private Toolbar mToolbar;
     private FirebaseAuth mAuth;
+    private DatabaseReference userRef;
 
 
     @Override
@@ -46,6 +52,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mAuth=FirebaseAuth.getInstance();
+        //check real-time database by using the user reference
+        userRef= FirebaseDatabase.getInstance().getReference().child("Users");
+
         BottomNavigationView navigation = findViewById(R.id.nav_bottom);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
@@ -118,18 +127,47 @@ public class MainActivity extends AppCompatActivity {
 //basically implement a chord to check the user authentication
     @Override
     protected void onStart() {
+        super.onStart();
+
         FirebaseUser currentUser= mAuth.getCurrentUser();
         //the user is not authenticated
         if(currentUser==null){
             SendUserToLoginActivity();
         }
-        super.onStart();
+        else {
+            checkUserExistence();
+        }
+    }
+
+    private void checkUserExistence() {
+        final String  currentUserId = mAuth.getCurrentUser().getUid();
+        userRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(!dataSnapshot.hasChild(currentUserId)){
+                    sendUserToSetupActivity();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void sendUserToSetupActivity() {
+        Intent setupIntent =new Intent(MainActivity.this,SetupActivity.class);
+        setupIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(setupIntent);
+        finish();
     }
 
     private void SendUserToLoginActivity() {
         Intent loginIntent =new Intent(MainActivity.this,LoginActivity.class);
         loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(loginIntent);
+        finish();
     }
 
 
