@@ -15,6 +15,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class ResgisterActivity extends AppCompatActivity {
     private EditText userEmail, userPassword, userConfirmPassword;
@@ -44,6 +45,23 @@ public class ResgisterActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        FirebaseUser currentUser= mAuth.getCurrentUser();
+        //the user is already register
+        if(currentUser!=null){
+            sendUserToMainActivity();
+        }
+    }
+    private void sendUserToMainActivity() {
+        Intent mainIntent= new Intent(ResgisterActivity.this,MainActivity.class);
+        //add the validation that is  by pressing  the back button, not allow to come back login activity unless logout
+        mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(mainIntent);
+        finish();
     }
 
     private void CreateNewAccount() {
