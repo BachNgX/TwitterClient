@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
@@ -85,27 +86,64 @@ public class SetupActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode==GALLERY_PICK && requestCode== RESULT_OK  && data!=null) {
+        if(requestCode==GALLERY_PICK && resultCode== RESULT_OK  && data!=null) {
             Uri imageUri = data.getData();
             //add a cropping function ,use the arthur hub library
-            CropImage.activity()
+            CropImage.activity(imageUri)
                     .setGuidelines(CropImageView.Guidelines.ON)
                     .setAspectRatio(1,1)
                     .start(this);
         }
 
-        if(requestCode== CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
-            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+        if(requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            final CropImage.ActivityResult result = CropImage.getActivityResult(data);
+
             if(resultCode == RESULT_OK) {
+                loadingBar.setTitle("Profile Image");
+                loadingBar.setMessage("Please wait,  While we are updating your profile image..");
+                loadingBar.show();
+                loadingBar.setCanceledOnTouchOutside(true);
+
+                //save the crop image inside fireStorage
                 Uri resultUri = result.getUri();
                 StorageReference filePath = userProfileImageRef.child(currentUserId+".jpg");
+//                filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+//                    @Override
+//                    public void onSuccess(Uri uri) {
+//                        //Bitmap hochladen
+////                        final String  downloadUrl =uri.toString();
+//                    }
+//                });
+                final String downloadUrl = filePath.getDownloadUrl().toString();
+
                 filePath.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                         if(task.isSuccessful()){
+                            Intent setupIntent = new Intent(SetupActivity.this,SetupActivity.class);
+                            startActivity(setupIntent);
+
                             Toast.makeText(SetupActivity.this,"Profile Image  stored successfully...",Toast.LENGTH_SHORT).show();
 
-//                            final String downloadUrl = task.getResult().getDownloadUrl().toString();
+//                             final String downloadUrl = filePath.getDownloadUrl().toString();
+//                             final String downloadUrl = StorageReference.getDownloadUr().;
+
+
+
+                            userRef.child("profileImage").setValue(downloadUrl)
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if(task.isSuccessful()) {
+                                                Toast.makeText(SetupActivity.this,"Profile Image stored to database successfully",Toast.LENGTH_SHORT).show();
+                                                loadingBar.dismiss();
+                                            } else {
+                                                String message = task.getException().getMessage();
+                                                Toast.makeText(SetupActivity.this,"Error occured.."+message,Toast.LENGTH_SHORT);
+                                                loadingBar.dismiss();
+                                            }
+                                        }
+                                    });
                         }
                     }
                 });
@@ -131,10 +169,10 @@ public class SetupActivity extends AppCompatActivity {
         }
         else {
 
-//            loadingBar.setTitle("Saving Information");
-//            loadingBar.setMessage("Please wait,  While we are creating your new account..");
-//            loadingBar.show();
-//            loadingBar.setCanceledOnTouchOutside(true);
+            loadingBar.setTitle("Saving Information");
+            loadingBar.setMessage("Please wait,  While we are creating your new account..");
+            loadingBar.show();
+            loadingBar.setCanceledOnTouchOutside(true);
 
             HashMap userMap = new HashMap();
             userMap.put("username",username);
