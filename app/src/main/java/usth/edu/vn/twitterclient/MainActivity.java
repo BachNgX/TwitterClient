@@ -18,8 +18,10 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -27,6 +29,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.widget.Toast.LENGTH_SHORT;
 
@@ -45,6 +49,11 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private DatabaseReference userRef;
 
+    private CircleImageView navProfileImage;
+    private TextView navProfileUserName;
+
+    String currentUserId;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mAuth=FirebaseAuth.getInstance();
+        currentUserId = mAuth.getCurrentUser().getUid();
         //check real-time database by using the user reference
         userRef= FirebaseDatabase.getInstance().getReference().child("Users");
 
@@ -76,6 +86,31 @@ public class MainActivity extends AppCompatActivity {
 
         navigationView = findViewById(R.id.navigation_view);
         View navView = navigationView.inflateHeaderView(R.layout.navigation_header);
+        navProfileImage = navView.findViewById(R.id.nav_profile_image);
+        navProfileUserName =findViewById(R.id.nav_user_fullname);
+
+        //currentUser who is online
+        userRef.child(currentUserId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists() && mAuth.getCurrentUser()!=null){
+
+//                    String fullname =dataSnapshot.child("fullname").getValue().toString();
+                    String image =dataSnapshot.child("profileImage").getValue().toString();
+
+//                    navProfileUserName.setText(fullname);
+//                    Picasso.get().load(image).placeholder(R.drawable.profile).into(navProfileImage);
+                    Glide.with(MainActivity.this).load(image).into(navProfileImage);
+
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
