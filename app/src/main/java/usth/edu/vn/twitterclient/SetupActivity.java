@@ -96,7 +96,7 @@ public class SetupActivity extends AppCompatActivity {
 
         if(requestCode== CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
-            if(requestCode == RESULT_OK) {
+            if(resultCode == RESULT_OK) {
                 Uri resultUri = result.getUri();
                 StorageReference filePath = userProfileImageRef.child(currentUserId+".jpg");
                 filePath.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
