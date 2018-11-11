@@ -6,49 +6,49 @@
     android:layout_height="match_parent"
     tools:context=".LoginActivity">
 
-    <LinearLayout
-        android:layout_width="383dp"
-        android:layout_height="54dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginEnd="0dp"
-        android:layout_marginRight="0dp"
-        android:orientation="horizontal">
+    <!--<LinearLayout-->
+        <!--android:layout_width="297dp"-->
+        <!--android:layout_height="73dp"-->
+        <!--android:layout_alignParentTop="true"-->
+        <!--android:layout_alignParentEnd="true"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:layout_marginEnd="0dp"-->
+        <!--android:layout_marginRight="0dp"-->
+        <!--android:orientation="horizontal">-->
 
-        <ImageView
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginStart="100dp"
-            android:layout_marginLeft="100dp"
-            android:layout_marginTop="10dp"
-            android:layout_weight="1"
-            android:contentDescription="TODO"
-            android:src="@drawable/logo2" />
+        <!--<ImageView-->
+            <!--android:layout_width="73dp"-->
+            <!--android:layout_height="30dp"-->
+            <!--android:layout_marginStart="100dp"-->
+            <!--android:layout_marginLeft="100dp"-->
+            <!--android:layout_marginTop="10dp"-->
+            <!--android:layout_weight="2"-->
+            <!--android:contentDescription="TODO"-->
+            <!--android:src="@drawable/logo2" />-->
 
-        <!--<TextView-->
-        <!--android:id="@+id/register_link"-->
-        <!--android:layout_width="60dp"-->
-        <!--android:layout_height="60dp"-->
-        <!--android:layout_marginStart="80dp"-->
-        <!--android:layout_marginLeft="80dp"-->
-        <!--android:layout_marginTop="15dp"-->
-        <!--android:layout_weight="1"-->
-        <!--android:textAllCaps="false"-->
-        <!--android:textAppearance="?android:attr/textAppearanceSmall"-->
-        <!--android:textColor="@color/colorButton"-->
-        <!--android:textStyle="bold"-->
-        <!--tools:text="Sign up" />-->
+        <!--&lt;!&ndash;<TextView&ndash;&gt;-->
+        <!--&lt;!&ndash;android:id="@+id/register_link"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:layout_width="60dp"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:layout_height="60dp"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:layout_marginStart="80dp"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:layout_marginLeft="80dp"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:layout_marginTop="15dp"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:layout_weight="1"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:textAllCaps="false"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:textAppearance="?android:attr/textAppearanceSmall"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:textColor="@color/colorButton"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:textStyle="bold"&ndash;&gt;-->
+        <!--&lt;!&ndash;tools:text="Sign up" />&ndash;&gt;-->
 
-        <ImageView
-            android:layout_width="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_height="30dp"
-            android:layout_weight="1"
-            android:contentDescription="TODO"
-            android:paddingLeft="90dp"
-            android:src="@drawable/menu_vertical" />
-    </LinearLayout>
+        <!--<ImageView-->
+            <!--android:layout_width="33dp"-->
+            <!--android:layout_height="43dp"-->
+            <!--android:layout_marginTop="10dp"-->
+            <!--android:layout_weight="1"-->
+            <!--android:contentDescription="TODO"-->
+            <!--android:paddingLeft="90dp"-->
+            <!--android:src="@drawable/menu_vertical2" />-->
+    <!--</LinearLayout>-->
 
     <EditText
         android:id="@+id/login_email"
@@ -117,9 +117,11 @@
         android:layout_width="wrap_content"
         android:layout_height="30dp"
         android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
         android:layout_alignParentBottom="true"
         android:layout_marginStart="138dp"
-        android:layout_marginBottom="152dp"
+        android:layout_marginTop="425dp"
+        android:layout_marginBottom="203dp"
         android:text="@string/forgot_password"
         android:textAllCaps="false"
         tools:layout_alignParentBottom="true" />
@@ -128,12 +130,14 @@
         android:id="@+id/register_account_link"
         android:layout_width="211dp"
         android:layout_height="42dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginEnd="46dp"
-        android:layout_marginRight="46dp"
-        android:layout_marginBottom="80dp"
+        android:layout_marginStart="128dp"
+        android:layout_marginLeft="128dp"
+        android:layout_marginTop="475dp"
+        android:layout_marginBottom="143dp"
         android:text="Create a new account"
         android:textAllCaps="false"
         android:textStyle="bold" />

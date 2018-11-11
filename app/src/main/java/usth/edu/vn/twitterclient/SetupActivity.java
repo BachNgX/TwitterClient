@@ -89,11 +89,15 @@ public class SetupActivity extends AppCompatActivity  {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()) {
-                    String image=  dataSnapshot.child("profileImage").getValue().toString();
+                    if(dataSnapshot.hasChild("profileImage")) {
+                        String image=  dataSnapshot.child("profileImage").getValue().toString();
 
-                    ///use Picasso library to display the image
+                        ///use Picasso library to display the image
 //                    Picasso.get().load(image).placeholder(R.drawable.profile).into(profileImage);
-                    Glide.with(SetupActivity.this).load(image).into(profileImage);
+                        Glide.with(SetupActivity.this).load(image).into(profileImage);
+                    } else {
+                        Toast.makeText(SetupActivity.this,"Please select profile image first..",Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
 
@@ -128,13 +132,7 @@ public class SetupActivity extends AppCompatActivity  {
                 //save the crop image inside fireStorage
                 Uri resultUri = result.getUri();
                 StorageReference filePath = userProfileImageRef.child(currentUserId+".jpg");
-//                filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-//                    @Override
-//                    public void onSuccess(Uri uri) {
-//                        //Bitmap hochladen
-////                        final String  downloadUrl =uri.toString();
-//                    }
-//                });
+
                 final String downloadUrl = filePath.getDownloadUrl().toString();
 
                 filePath.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {

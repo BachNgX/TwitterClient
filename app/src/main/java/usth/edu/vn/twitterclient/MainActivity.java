@@ -29,6 +29,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -61,7 +62,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mAuth=FirebaseAuth.getInstance();
-        currentUserId = mAuth.getCurrentUser().getUid();
+        if(mAuth.getCurrentUser() != null) {
+            currentUserId = mAuth.getCurrentUser().getUid();
+
+        }
         //check real-time database by using the user reference
         userRef= FirebaseDatabase.getInstance().getReference().child("Users");
 
@@ -75,6 +79,9 @@ public class MainActivity extends AppCompatActivity {
 
         drawerLayout = findViewById(R.id.drawable_layout);
         actionBarDrawerToggle = new ActionBarDrawerToggle(MainActivity.this,drawerLayout,R.string.drawer_open,R.string.drawer_close);
+//        actionBarDrawerToggle.setDrawerIndicatorEnabled(false);
+//        mToolbar.setNavigationIcon(R.drawable.profile);
+
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -87,22 +94,29 @@ public class MainActivity extends AppCompatActivity {
         navigationView = findViewById(R.id.navigation_view);
         View navView = navigationView.inflateHeaderView(R.layout.navigation_header);
         navProfileImage = navView.findViewById(R.id.nav_profile_image);
-        navProfileUserName =findViewById(R.id.nav_user_fullname);
+        navProfileUserName =navView.findViewById(R.id.nav_user_fullname);
 
         //currentUser who is online
-        userRef.child(currentUserId).addValueEventListener(new ValueEventListener() {
+        if(mAuth.getCurrentUser() != null) {
+
+            userRef.child(currentUserId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists() && mAuth.getCurrentUser()!=null){
 
-//                    String fullname =dataSnapshot.child("fullname").getValue().toString();
-                    String image =dataSnapshot.child("profileImage").getValue().toString();
+                    if(dataSnapshot.hasChild("fullname")) {
+                        String fullname =dataSnapshot.child("fullname").getValue().toString();
+                        navProfileUserName.setText(fullname);
+                    }
+                    if(dataSnapshot.hasChild("profileImage")) {
+                        String image =dataSnapshot.child("profileImage").getValue().toString();
 
-//                    navProfileUserName.setText(fullname);
-//                    Picasso.get().load(image).placeholder(R.drawable.profile).into(navProfileImage);
-                    Glide.with(MainActivity.this).load(image).into(navProfileImage);
-
-
+                        Picasso.get().load(image).placeholder(R.drawable.profile).into(navProfileImage);
+//                    Glide.with(MainActivity.this).load(image).into(navProfileImage);
+                    }
+                    else {
+                        Toast.makeText(MainActivity.this,"Profile Name do not exist..",Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
 
@@ -110,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        });
+        });}
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override

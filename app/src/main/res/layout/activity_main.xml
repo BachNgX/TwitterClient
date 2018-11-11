@@ -14,7 +14,8 @@
 
         <include
             android:id="@+id/main_page_Toobar"
-            layout="@layout/app_bar_layout"></include>
+            layout="@layout/app_bar_layout"
+            ></include>
 
         <FrameLayout
             android:id="@+id/main_container"
