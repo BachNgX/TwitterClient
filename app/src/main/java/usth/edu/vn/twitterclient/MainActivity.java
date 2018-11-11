@@ -1,9 +1,11 @@
 package usth.edu.vn.twitterclient;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -52,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
     private CircleImageView navProfileImage;
     private TextView navProfileUserName;
+    private FloatingActionButton fab;
 
     String currentUserId;
 
@@ -76,6 +79,14 @@ public class MainActivity extends AppCompatActivity {
         mToolbar = findViewById(R.id.main_app_bar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("Home");
+
+        fab= findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+              sendUserToPostActivity();
+            }
+        });
 
         drawerLayout = findViewById(R.id.drawable_layout);
         actionBarDrawerToggle = new ActionBarDrawerToggle(MainActivity.this,drawerLayout,R.string.drawer_open,R.string.drawer_close);
@@ -111,8 +122,8 @@ public class MainActivity extends AppCompatActivity {
                     if(dataSnapshot.hasChild("profileImage")) {
                         String image =dataSnapshot.child("profileImage").getValue().toString();
 
-                        Picasso.get().load(image).placeholder(R.drawable.profile).into(navProfileImage);
-//                    Glide.with(MainActivity.this).load(image).into(navProfileImage);
+//                        Picasso.get().load(image).placeholder(R.drawable.profile).into(navProfileImage);
+                    Glide.with(MainActivity.this).load(image).into(navProfileImage);
                     }
                     else {
                         Toast.makeText(MainActivity.this,"Profile Name do not exist..",Toast.LENGTH_SHORT).show();
@@ -134,6 +145,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void sendUserToPostActivity() {
+        Intent intent= new Intent(getApplicationContext(),PostActivity.class);
+        startActivity(intent);
+    }
+
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
