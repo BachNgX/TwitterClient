@@ -1,6 +1,7 @@
 package usth.edu.vn.twitterclient;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,13 +14,17 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 
 
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,11 +55,12 @@ public class MainActivity extends AppCompatActivity {
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private Toolbar mToolbar;
     private FirebaseAuth mAuth;
-    private DatabaseReference userRef;
+    private DatabaseReference userRef, postsRef;
 
     private CircleImageView navProfileImage;
     private TextView navProfileUserName;
     private FloatingActionButton fab;
+//    private RecyclerView postList;
 
     String currentUserId;
 
@@ -71,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
         }
         //check real-time database by using the user reference
         userRef= FirebaseDatabase.getInstance().getReference().child("Users");
+        postsRef=FirebaseDatabase.getInstance().getReference().child("Posts");
 
         BottomNavigationView navigation = findViewById(R.id.nav_bottom);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -106,6 +113,15 @@ public class MainActivity extends AppCompatActivity {
         View navView = navigationView.inflateHeaderView(R.layout.navigation_header);
         navProfileImage = navView.findViewById(R.id.nav_profile_image);
         navProfileUserName =navView.findViewById(R.id.nav_user_fullname);
+
+//        postList= findViewById(R.id.all_users_post_list);
+//        postList.setHasFixedSize(true);
+//        LinearLayoutManager linearLayoutManager= new LinearLayoutManager(this);
+//        linearLayoutManager.setReverseLayout(true);
+//        linearLayoutManager.setStackFromEnd(true);
+//        postList.setLayoutManager(linearLayoutManager);
+//
+//        displayAllUserPost();
 
         //currentUser who is online
         if(mAuth.getCurrentUser() != null) {
@@ -145,6 +161,85 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+//    private void displayAllUserPost() {
+//
+//        FirebaseRecyclerOptions<Posts> options =
+//                new FirebaseRecyclerOptions.Builder<Posts>()
+//                .setQuery(postsRef ,Posts.class)
+//                .build();
+//        FirebaseRecyclerAdapter adapter = new FirebaseRecyclerAdapter<Posts,PostsViewHolder>( options) {
+//            @NonNull
+//            @Override
+//            public PostsViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+//                View view = LayoutInflater.from(viewGroup.getContext())
+//                        .inflate(R.layout.all_posts_layout,viewGroup, false);
+//                return new PostsViewHolder(view);
+//            }
+//
+//            @Override
+//            protected void onBindViewHolder(@NonNull PostsViewHolder holder, int position, @NonNull Posts model) {
+//                    holder.setFullname(model.getFullname());
+//                    holder.setTime(model.getTime());
+//                    holder.setDate(model.getDate());
+//                    holder.setDescription(model.getDescription());
+//                    holder.setProfileImage(model.getProfileImage());
+//                    holder.setTweetImage(model.getTweetImage());
+//
+//            }
+//        };
+//
+//        postList.setAdapter(adapter);
+////
+////        FirebaseRecyclerAdapter<Posts,PostsViewHolder> firebaseRecyclerAdapter
+////                = new FirebaseRecyclerAdapter<Posts, PostsViewHolder>(
+////                        Posts.class, R.layout.all_posts_layout, PostsViewHolder.class, ) {
+////            @Override
+////            protected void onBindViewHolder(@NonNull PostsViewHolder holder, int position, @NonNull Posts model) {
+////
+////            }
+////
+////            @NonNull
+////            @Override
+////            public PostsViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+////                return null;
+////            }
+////        }
+//
+//    }
+//
+//    public static class PostsViewHolder extends RecyclerView.ViewHolder {
+//        View mView;
+//        public PostsViewHolder(@NonNull View itemView) {
+//            super(itemView);
+//            mView= itemView;
+//        }
+//        public void setFullname(String fullname) {
+//            TextView userName =mView.findViewById(R.id.post_user_name);
+//            userName.setText(fullname);
+//        }
+//        public void setProfileImage ( String profileImage) {
+//            CircleImageView image  =mView.findViewById(R.id.post_profile_image);
+//            Picasso.get().load(profileImage).placeholder(R.drawable.profile).into(image);
+//        }
+//        public void setTime(String time) {
+//            TextView postTime =mView.findViewById(R.id.post_time);
+//            postTime.setText("  "+time);
+//        }
+//        public void setDate(String date) {
+//            TextView postDate =mView.findViewById(R.id.post_date);
+//            postDate.setText(date);
+//        }
+//        public void setDescription(String description) {
+//            TextView postDecription =mView.findViewById(R.id.post_description);
+//            postDecription.setText(description);
+//        }
+//        public void setTweetImage(String tweetImage) {
+//            ImageView postImage  =mView.findViewById(R.id.post_image);
+//            Picasso.get().load(tweetImage).placeholder(R.drawable.profile).into(postImage);
+//        }
+//    }
+
 
     private void sendUserToPostActivity() {
         Intent intent= new Intent(getApplicationContext(),PostActivity.class);

@@ -26,6 +26,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
@@ -44,7 +45,7 @@ public class SetupActivity extends AppCompatActivity  {
 
 
     private CircleImageView profileImage;
-    final static  int GALLERY_PICK=1;
+    private final static  int GALLERY_PICK=1;
 
     String currentUserId;
 
@@ -93,8 +94,8 @@ public class SetupActivity extends AppCompatActivity  {
                         String image=  dataSnapshot.child("profileImage").getValue().toString();
 
                         ///use Picasso library to display the image
-//                    Picasso.get().load(image).placeholder(R.drawable.profile).into(profileImage);
-                        Glide.with(SetupActivity.this).load(image).into(profileImage);
+                    Picasso.get().load(image).placeholder(R.drawable.profile).into(profileImage);
+//                        Glide.with(SetupActivity.this).load(image).into(profileImage);
                     } else {
                         Toast.makeText(SetupActivity.this,"Please select profile image first..",Toast.LENGTH_SHORT).show();
                     }
