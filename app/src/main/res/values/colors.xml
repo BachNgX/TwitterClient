@@ -5,5 +5,7 @@
     <color name="colorbar">#fcfffe</color>
     <color name="colorAccent">#D81B60</color>
     <color name="colorButton">#00acee</color>
+    <color name="colorBegin">#03a9f4</color>
+
 
 </resources>

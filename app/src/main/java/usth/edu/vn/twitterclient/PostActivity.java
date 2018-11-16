@@ -57,14 +57,7 @@ public class PostActivity extends AppCompatActivity {
         mToolbar=findViewById(R.id.post_tweet_toolbar);
         setSupportActionBar(mToolbar);
         mToolbar.setNavigationIcon(R.drawable.exit);
-//        mToolbar.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                sendUserToMainActivity();
-//            }
-//        });
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
         getSupportActionBar().setTitle("Tweet");
         updateButton= findViewById(R.id.tweet_button);
         postDescription = findViewById(R.id.post_description);
@@ -130,7 +123,7 @@ public class PostActivity extends AppCompatActivity {
         SimpleDateFormat currentDate = new SimpleDateFormat("dd-MMMM-yyy");
         saveCurrentDate = currentDate.format(calForDate.getTime());
 
-        Calendar calForTime= Calendar.getInstance();
+//        Calendar c= Calendar.getInstance();
         SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm");
         saveCurrentTime = currentTime.format(calForDate.getTime());
 
@@ -143,13 +136,13 @@ public class PostActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                 if(task.isSuccessful()){
                     Toast.makeText(PostActivity.this, "Post Image  stored successfully......", Toast.LENGTH_SHORT).show();
-                    Task<Uri> result = task.getResult().getMetadata().getReference().getDownloadUrl();
-                    result.addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            final String downloadUrl = uri.toString();
-                        }
-                    });
+//                    Task<Uri> result = task.getResult().getMetadata().getReference().getDownloadUrl();
+//                    result.addOnSuccessListener(new OnSuccessListener<Uri>() {
+//                        @Override
+//                        public void onSuccess(Uri uri) {
+////                            final String downloadUrl = uri.toString();
+//                        }
+//                    });
                     Toast.makeText(PostActivity.this,"tweeted..",Toast.LENGTH_SHORT).show();
                     savingTweetInformation();
                 } else {

@@ -24,6 +24,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -60,9 +61,11 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference userRef, postsRef;
 
     private CircleImageView navProfileImage;
+    private TextView navProfileUserFullName;
     private TextView navProfileUserName;
     private FloatingActionButton fab;
     private RecyclerView postList;
+    private HomeFragment mHome;
 
     String currentUserId;
 
@@ -71,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         mAuth=FirebaseAuth.getInstance();
         if(mAuth.getCurrentUser() != null) {
@@ -114,7 +118,8 @@ public class MainActivity extends AppCompatActivity {
         navigationView = findViewById(R.id.navigation_view);
         View navView = navigationView.inflateHeaderView(R.layout.navigation_header);
         navProfileImage = navView.findViewById(R.id.nav_profile_image);
-        navProfileUserName =navView.findViewById(R.id.nav_user_fullname);
+        navProfileUserFullName =navView.findViewById(R.id.nav_user_fullname);
+        navProfileUserName =navView.findViewById(R.id.nav_user_username);
 
 //        postList= findViewById(R.id.all_users_post_list);
 //        postList.setHasFixedSize(true);
@@ -132,13 +137,17 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists() && mAuth.getCurrentUser()!=null){
+                    if(dataSnapshot.hasChild("username")) {
+                        String username =dataSnapshot.child("username").getValue().toString();
+                        navProfileUserName.setText(username);
+                    }
 
                     if(dataSnapshot.hasChild("fullname")) {
 //                        String image =dataSnapshot.child("profileImage").getValue().toString();
 //                        Toast.makeText(MainActivity.this,"......",Toast.LENGTH_SHORT).show();
 
                         String fullname =dataSnapshot.child("fullname").getValue().toString();
-                        navProfileUserName.setText(fullname);
+                        navProfileUserFullName.setText(fullname);
                     }
                     if(dataSnapshot.hasChild("profileImage")) {
                         String image =dataSnapshot.child("profileImage").getValue().toString();
