@@ -16,6 +16,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -51,7 +52,6 @@ public class PostActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
-
 
 
         mToolbar=findViewById(R.id.post_tweet_toolbar);
@@ -136,14 +136,35 @@ public class PostActivity extends AppCompatActivity {
 
         postRadomName= saveCurrentDate+saveCurrentTime;
 
-
         StorageReference filePath = postImageRef.child("Post Images").child(imageUri.getLastPathSegment()+ postRadomName + ".jpg");
-        downloadUrl = filePath.getDownloadUrl().toString();
+
         filePath.putFile(imageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                 if(task.isSuccessful()){
-
+                    Toast.makeText(PostActivity.this, "Post Image  stored successfully......", Toast.LENGTH_SHORT).show();
+                    Task<Uri> result = task.getResult().getMetadata().getReference().getDownloadUrl();
+                    result.addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            final String downloadUrl = uri.toString();
+                            userRef.child("Post Images").setValue(downloadUrl)
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+//                                                sendUserToMainActivity();
+                                                Toast.makeText(PostActivity.this, "Post Image stored to database successfully...", Toast.LENGTH_SHORT).show();
+//                                                loadingBar.dismiss();
+                                            } else {
+                                                String message = task.getException().getMessage();
+                                                Toast.makeText(PostActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+//                                                loadingBar.dismiss();
+                                            }
+                                        }
+                                    });
+                        }
+                    });
                     Toast.makeText(PostActivity.this,"tweeted..",Toast.LENGTH_SHORT).show();
                     savingTweetInformation();
                 } else {
@@ -168,7 +189,7 @@ public class PostActivity extends AppCompatActivity {
                     postMap.put("date", saveCurrentDate);
                     postMap.put("time", saveCurrentTime);
                     postMap.put("description", description);
-                    postMap.put("TweetImage", downloadUrl);
+                    postMap.put("tweetImage", downloadUrl);
                     postMap.put("profileImage", userProfileImage);
                     postMap.put("fullname", userFullName);
 
@@ -177,6 +198,7 @@ public class PostActivity extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task task) {
                                     if(task.isSuccessful()) {
+                                        sendUserToMainActivity();
                                         Toast.makeText(PostActivity.this,"  new Tweet is updated...", Toast.LENGTH_SHORT).show();
                                     } else {
                                         Toast.makeText(PostActivity.this,"  Error...", Toast.LENGTH_SHORT).show();

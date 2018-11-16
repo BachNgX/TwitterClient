@@ -29,6 +29,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -60,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
     private CircleImageView navProfileImage;
     private TextView navProfileUserName;
     private FloatingActionButton fab;
-//    private RecyclerView postList;
+    private RecyclerView postList;
 
     String currentUserId;
 
@@ -120,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
 //        linearLayoutManager.setReverseLayout(true);
 //        linearLayoutManager.setStackFromEnd(true);
 //        postList.setLayoutManager(linearLayoutManager);
-//
+////
 //        displayAllUserPost();
 
         //currentUser who is online
@@ -132,14 +134,19 @@ public class MainActivity extends AppCompatActivity {
                 if(dataSnapshot.exists() && mAuth.getCurrentUser()!=null){
 
                     if(dataSnapshot.hasChild("fullname")) {
+//                        String image =dataSnapshot.child("profileImage").getValue().toString();
+//                        Toast.makeText(MainActivity.this,"......",Toast.LENGTH_SHORT).show();
+
                         String fullname =dataSnapshot.child("fullname").getValue().toString();
                         navProfileUserName.setText(fullname);
                     }
                     if(dataSnapshot.hasChild("profileImage")) {
                         String image =dataSnapshot.child("profileImage").getValue().toString();
-
-//                        Picasso.get().load(image).placeholder(R.drawable.profile).into(navProfileImage);
-                    Glide.with(MainActivity.this).load(image).into(navProfileImage);
+////                        Toast.makeText(MainActivity.this,"......",Toast.LENGTH_SHORT).show();
+//
+//                        Picasso.get().load("http://i.imgur.com/DvpvklR.png").into(navProfileImage);
+                        Picasso.get().load(image).placeholder(R.drawable.profile).into(navProfileImage);
+//                    Glide.with(MainActivity.this).load(image).into(navProfileImage);
                     }
                     else {
                         Toast.makeText(MainActivity.this,"Profile Name do not exist..",Toast.LENGTH_SHORT).show();
@@ -161,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
+//
 //    private void displayAllUserPost() {
 //
 //        FirebaseRecyclerOptions<Posts> options =
@@ -207,38 +214,38 @@ public class MainActivity extends AppCompatActivity {
 ////        }
 //
 //    }
-//
-//    public static class PostsViewHolder extends RecyclerView.ViewHolder {
-//        View mView;
-//        public PostsViewHolder(@NonNull View itemView) {
-//            super(itemView);
-//            mView= itemView;
-//        }
-//        public void setFullname(String fullname) {
-//            TextView userName =mView.findViewById(R.id.post_user_name);
-//            userName.setText(fullname);
-//        }
-//        public void setProfileImage ( String profileImage) {
-//            CircleImageView image  =mView.findViewById(R.id.post_profile_image);
-//            Picasso.get().load(profileImage).placeholder(R.drawable.profile).into(image);
-//        }
-//        public void setTime(String time) {
-//            TextView postTime =mView.findViewById(R.id.post_time);
-//            postTime.setText("  "+time);
-//        }
-//        public void setDate(String date) {
-//            TextView postDate =mView.findViewById(R.id.post_date);
-//            postDate.setText(date);
-//        }
-//        public void setDescription(String description) {
-//            TextView postDecription =mView.findViewById(R.id.post_description);
-//            postDecription.setText(description);
-//        }
-//        public void setTweetImage(String tweetImage) {
-//            ImageView postImage  =mView.findViewById(R.id.post_image);
-//            Picasso.get().load(tweetImage).placeholder(R.drawable.profile).into(postImage);
-//        }
-//    }
+
+    public static class PostsViewHolder extends RecyclerView.ViewHolder {
+        View mView;
+        public PostsViewHolder(@NonNull View itemView) {
+            super(itemView);
+            mView= itemView;
+        }
+        public void setFullname(String fullname) {
+            TextView userName =mView.findViewById(R.id.post_user_name);
+            userName.setText(fullname);
+        }
+        public void setProfileImage ( String profileImage) {
+            CircleImageView image  =mView.findViewById(R.id.post_profile_image);
+            Picasso.get().load(profileImage).placeholder(R.drawable.profile).into(image);
+        }
+        public void setTime(String time) {
+            TextView postTime =mView.findViewById(R.id.post_time);
+            postTime.setText("  "+time);
+        }
+        public void setDate(String date) {
+            TextView postDate =mView.findViewById(R.id.post_date);
+            postDate.setText(date);
+        }
+        public void setDescription(String description) {
+            TextView postDecription =mView.findViewById(R.id.post_description);
+            postDecription.setText(description);
+        }
+        public void setTweetImage(String tweetImage) {
+            ImageView postImage  =mView.findViewById(R.id.post_image);
+            Picasso.get().load(tweetImage).placeholder(R.drawable.profile).into(postImage);
+        }
+    }
 
 
     private void sendUserToPostActivity() {

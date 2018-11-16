@@ -40,6 +40,6 @@
         android:layout_height="wrap_content"
         android:background="@color/colorbar"
         android:layout_gravity="bottom"
-        app:itemTextColor="@color/design_default_color_primary"
+        app:itemTextColor="@android:color/holo_blue_light"
         app:menu="@menu/main_menu"></android.support.design.widget.BottomNavigationView>
 </android.support.design.widget.CoordinatorLayout>

@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -91,11 +92,18 @@ public class SetupActivity extends AppCompatActivity  {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()) {
                     if(dataSnapshot.hasChild("profileImage")) {
+//                        StorageReference filePath = userProfileImageRef.child(currentUserId+".jpg");
+//
+//                        final String downloadUrl = filePath.getDownloadUrl().toString();
                         String image=  dataSnapshot.child("profileImage").getValue().toString();
-
+//                        Log.d("get url.."," on lick get ");
                         ///use Picasso library to display the image
-                    Picasso.get().load(image).placeholder(R.drawable.profile).into(profileImage);
+//                        Toast.makeText(SetupActivity.this,"get linked..",Toast.LENGTH_SHORT).show();
+
+                        Picasso.get().load(image).into(profileImage);
 //                        Glide.with(SetupActivity.this).load(image).into(profileImage);
+//                        Toast.makeText(SetupActivity.this,"done image",Toast.LENGTH_SHORT).show();
+
                     } else {
                         Toast.makeText(SetupActivity.this,"Please select profile image first..",Toast.LENGTH_SHORT).show();
                     }
@@ -108,67 +116,75 @@ public class SetupActivity extends AppCompatActivity  {
             }
         });
     }
-
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode==GALLERY_PICK && resultCode== RESULT_OK  && data!=null) {
+
+        if(requestCode == GALLERY_PICK&& resultCode == RESULT_OK && data != null) {
             Uri imageUri = data.getData();
-            //add a cropping function ,use the arthur hub library
+
             CropImage.activity(imageUri)
                     .setGuidelines(CropImageView.Guidelines.ON)
                     .setAspectRatio(1,1)
                     .start(this);
         }
 
-        if(requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
-            final CropImage.ActivityResult result = CropImage.getActivityResult(data);
 
-            if(resultCode == RESULT_OK) {
+        if(requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE)
+        {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+
+            if (resultCode == RESULT_OK) {
+
                 loadingBar.setTitle("Profile Image");
-                loadingBar.setMessage("Please wait,  While we are updating your profile image..");
+                loadingBar.setMessage("Please wait,  While we are updating your profile image.....");
                 loadingBar.show();
                 loadingBar.setCanceledOnTouchOutside(true);
 
-                //save the crop image inside fireStorage
                 Uri resultUri = result.getUri();
-                StorageReference filePath = userProfileImageRef.child(currentUserId+".jpg");
 
-                final String downloadUrl = filePath.getDownloadUrl().toString();
+                StorageReference filePath = userProfileImageRef.child(currentUserId + ".jpg");
 
                 filePath.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                        if(task.isSuccessful()){
-                            Intent setupIntent = new Intent(SetupActivity.this,SetupActivity.class);
-                            startActivity(setupIntent);
+                        if(task.isSuccessful()) {
 
-                            Toast.makeText(SetupActivity.this,"Profile Image  stored successfully...",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(SetupActivity.this, "Profile Image  stored successfully......", Toast.LENGTH_SHORT).show();
 
-//                             final String downloadUrl = filePath.getDownloadUrl().toString();
-//                             final String downloadUrl = StorageReference.getDownloadUr().;
+                            Task<Uri> result = task.getResult().getMetadata().getReference().getDownloadUrl();
 
+                            result.addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    final String downloadUrl = uri.toString();
 
+                                    userRef.child("profileImage").setValue(downloadUrl)
+                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if (task.isSuccessful()) {
+                                                        Intent selfIntent = new Intent(SetupActivity.this, SetupActivity.class);
+                                                        startActivity(selfIntent);
 
-                            userRef.child("profileImage").setValue(downloadUrl)
-                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            if(task.isSuccessful()) {
-                                                Toast.makeText(SetupActivity.this,"Profile Image stored to database successfully",Toast.LENGTH_SHORT).show();
-                                                loadingBar.dismiss();
-                                            } else {
-                                                String message = task.getException().getMessage();
-                                                Toast.makeText(SetupActivity.this,"Error occured.."+message,Toast.LENGTH_SHORT);
-                                                loadingBar.dismiss();
-                                            }
-                                        }
-                                    });
+                                                        Toast.makeText(SetupActivity.this, "Profile Image stored to database successfully...", Toast.LENGTH_SHORT).show();
+                                                        loadingBar.dismiss();
+                                                    } else {
+                                                        String message = task.getException().getMessage();
+                                                        Toast.makeText(SetupActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+                                                        loadingBar.dismiss();
+                                                    }
+                                                }
+                                            });
+                                }
+                            });
                         }
                     }
                 });
-            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                Exception error = result.getError();
+            }
+            else {
+                Toast.makeText(SetupActivity.this, "Error...", Toast.LENGTH_SHORT).show();
+                loadingBar.dismiss();
             }
         }
     }

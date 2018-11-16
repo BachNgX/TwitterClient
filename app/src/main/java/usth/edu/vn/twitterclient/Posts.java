@@ -4,6 +4,10 @@ public class Posts {
     public String uid;
     public String time;
     public String date;
+    public String tweetImage;
+    public String description;
+    public String profileImage;
+    public String fullname;
 
     public Posts() {
 
@@ -19,10 +23,7 @@ public class Posts {
         this.fullname = fullname;
     }
 
-    public String tweetImage;
-    public String description;
-    public String profileImage;
-    public String fullname;
+
 
 
     public String getUid() {
