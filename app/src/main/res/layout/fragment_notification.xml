@@ -7,20 +7,38 @@
     tools:context=".NotificationFragment">
 
     <!-- TODO: Update blank fragment layout -->
+    <!--<TextView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="567dp"-->
+        <!--android:layout_marginTop="150dp"-->
+        <!--android:text="notification_fragment"-->
+        <!--android:textAlignment="center" />-->
 
-    <android.support.design.widget.TabLayout
+    <!--<android.support.design.widget.TabLayout-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_marginTop="55dp"-->
+        <!--android:id="@+id/tabs"-->
+        <!--app:tabMode="fixed"-->
+        <!--app:tabGravity="fill"/>-->
+
+    <!--<android.support.v4.view.ViewPager-->
+        <!--android:id="@+id/viewpager"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--app:layout_behavior="@string/appbar_scrolling_view_behavior"-->
+        <!--tools:layout_editor_absoluteX="0dp"-->
+        <!--tools:layout_editor_absoluteY="0dp" />-->
+
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:layout_marginTop="55dp"
-        android:id="@+id/tabs"
-        app:tabMode="fixed"
-        app:tabGravity="fill"/>
-
-    <android.support.v4.view.ViewPager
-        android:id="@+id/viewpager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="0dp" />
+        android:layout_gravity="bottom|end"
+        android:layout_marginRight="30dp"
+        android:layout_marginBottom="65dp"
+        android:clickable="true"
+        app:backgroundTint="@android:color/holo_blue_light"
+        app:srcCompat="@drawable/tweet2" />
 </FrameLayout>

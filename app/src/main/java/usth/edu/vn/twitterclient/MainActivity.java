@@ -65,7 +65,6 @@ public class MainActivity extends AppCompatActivity {
     private TextView navProfileUserName;
     private FloatingActionButton fab;
     private RecyclerView postList;
-    private HomeFragment mHome;
 
     String currentUserId;
 
@@ -87,19 +86,20 @@ public class MainActivity extends AppCompatActivity {
 
         BottomNavigationView navigation = findViewById(R.id.nav_bottom);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        loadFragment(new HomeFragment());
 
 
         mToolbar = findViewById(R.id.main_app_bar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("Home");
 
-        fab= findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-              sendUserToPostActivity();
-            }
-        });
+//        fab= findViewById(R.id.fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//              sendUserToPostActivity();
+//            }
+//        });
 
         drawerLayout = findViewById(R.id.drawable_layout);
         actionBarDrawerToggle = new ActionBarDrawerToggle(MainActivity.this,drawerLayout,R.string.drawer_open,R.string.drawer_close);
@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
 //        linearLayoutManager.setReverseLayout(true);
 //        linearLayoutManager.setStackFromEnd(true);
 //        postList.setLayoutManager(linearLayoutManager);
-////
+//
 //        displayAllUserPost();
 
         //currentUser who is online
@@ -141,19 +141,12 @@ public class MainActivity extends AppCompatActivity {
                         String username =dataSnapshot.child("username").getValue().toString();
                         navProfileUserName.setText(username);
                     }
-
                     if(dataSnapshot.hasChild("fullname")) {
-//                        String image =dataSnapshot.child("profileImage").getValue().toString();
-//                        Toast.makeText(MainActivity.this,"......",Toast.LENGTH_SHORT).show();
-
                         String fullname =dataSnapshot.child("fullname").getValue().toString();
                         navProfileUserFullName.setText(fullname);
                     }
                     if(dataSnapshot.hasChild("profileImage")) {
                         String image =dataSnapshot.child("profileImage").getValue().toString();
-////                        Toast.makeText(MainActivity.this,"......",Toast.LENGTH_SHORT).show();
-//
-//                        Picasso.get().load("http://i.imgur.com/DvpvklR.png").into(navProfileImage);
                         Picasso.get().load(image).placeholder(R.drawable.profile).into(navProfileImage);
 //                    Glide.with(MainActivity.this).load(image).into(navProfileImage);
                     }
@@ -177,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-//
+
 //    private void displayAllUserPost() {
 //
 //        FirebaseRecyclerOptions<Posts> options =
@@ -204,25 +197,13 @@ public class MainActivity extends AppCompatActivity {
 //
 //            }
 //        };
-//
+//        adapter.startListening();
 //        postList.setAdapter(adapter);
-////
-////        FirebaseRecyclerAdapter<Posts,PostsViewHolder> firebaseRecyclerAdapter
-////                = new FirebaseRecyclerAdapter<Posts, PostsViewHolder>(
-////                        Posts.class, R.layout.all_posts_layout, PostsViewHolder.class, ) {
-////            @Override
-////            protected void onBindViewHolder(@NonNull PostsViewHolder holder, int position, @NonNull Posts model) {
-////
-////            }
-////
-////            @NonNull
-////            @Override
-////            public PostsViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-////                return null;
-////            }
-////        }
+////        adapter.stopListening();
+//
 //
 //    }
+
 
     public static class PostsViewHolder extends RecyclerView.ViewHolder {
         View mView;
@@ -236,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
         }
         public void setProfileImage ( String profileImage) {
             CircleImageView image  =mView.findViewById(R.id.post_profile_image);
-            Picasso.get().load(profileImage).placeholder(R.drawable.profile).into(image);
+            Picasso.get().load(profileImage).into(image);
         }
         public void setTime(String time) {
             TextView postTime =mView.findViewById(R.id.post_time);
@@ -247,12 +228,12 @@ public class MainActivity extends AppCompatActivity {
             postDate.setText(date);
         }
         public void setDescription(String description) {
-            TextView postDecription =mView.findViewById(R.id.post_description);
-            postDecription.setText(description);
+            TextView postDecryption =mView.findViewById(R.id.post_description);
+            postDecryption.setText(description);
         }
         public void setTweetImage(String tweetImage) {
             ImageView postImage  =mView.findViewById(R.id.post_image);
-            Picasso.get().load(tweetImage).placeholder(R.drawable.profile).into(postImage);
+            Picasso.get().load(tweetImage).into(postImage);
         }
     }
 
@@ -314,6 +295,11 @@ public class MainActivity extends AppCompatActivity {
         else {
             checkUserExistence();
         }
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+//        adapter.stopListening();
     }
 
     private void checkUserExistence() {

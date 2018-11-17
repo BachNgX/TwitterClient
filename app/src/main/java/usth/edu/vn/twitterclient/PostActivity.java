@@ -42,7 +42,7 @@ public class PostActivity extends AppCompatActivity {
     private Uri imageUri;
     private String description;
     private StorageReference postImageRef;
-    private String saveCurrentDate,saveCurrentTime,postRadomName, downloadUrl,currentUserId;
+    private String saveCurrentDate,saveCurrentTime, downloadUrl, postRadomName,currentUserId;
     private DatabaseReference userRef, postsRef;
     private FirebaseAuth mAuth;
 
@@ -136,13 +136,29 @@ public class PostActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                 if(task.isSuccessful()){
                     Toast.makeText(PostActivity.this, "Post Image  stored successfully......", Toast.LENGTH_SHORT).show();
-//                    Task<Uri> result = task.getResult().getMetadata().getReference().getDownloadUrl();
-//                    result.addOnSuccessListener(new OnSuccessListener<Uri>() {
-//                        @Override
-//                        public void onSuccess(Uri uri) {
-////                            final String downloadUrl = uri.toString();
-//                        }
-//                    });
+                    Task<Uri> result = task.getResult().getMetadata().getReference().getDownloadUrl();
+//                    Task<Uri> downloadUrl= task.getResult().getMetadata().getReference().getDownloadUrl();
+//                    downloadUrl= task.getResult().getMetadata().getReference().getDownloadUrl().toString();
+                    result.addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            downloadUrl = uri.toString();
+                            userRef.child(currentUserId).child("postImage").setValue(downloadUrl)
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+                                                Toast.makeText(PostActivity.this, "Tweet Image stored to database successfully...", Toast.LENGTH_SHORT).show();
+//                                                loadingBar.dismiss();
+                                            } else {
+                                                String message = task.getException().getMessage();
+                                                Toast.makeText(PostActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+//                                                loadingBar.dismiss();
+                                            }
+                                        }
+                                    });
+                        }
+                    });
                     Toast.makeText(PostActivity.this,"tweeted..",Toast.LENGTH_SHORT).show();
                     savingTweetInformation();
                 } else {
