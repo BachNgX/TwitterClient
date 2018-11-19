@@ -93,19 +93,12 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("Home");
 
-//        fab= findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//              sendUserToPostActivity();
-//            }
-//        });
+
 
         drawerLayout = findViewById(R.id.drawable_layout);
         actionBarDrawerToggle = new ActionBarDrawerToggle(MainActivity.this,drawerLayout,R.string.drawer_open,R.string.drawer_close);
 //        actionBarDrawerToggle.setDrawerIndicatorEnabled(false);
 //        mToolbar.setNavigationIcon(R.drawable.profile);
-
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -120,15 +113,6 @@ public class MainActivity extends AppCompatActivity {
         navProfileImage = navView.findViewById(R.id.nav_profile_image);
         navProfileUserFullName =navView.findViewById(R.id.nav_user_fullname);
         navProfileUserName =navView.findViewById(R.id.nav_user_username);
-
-//        postList= findViewById(R.id.all_users_post_list);
-//        postList.setHasFixedSize(true);
-//        LinearLayoutManager linearLayoutManager= new LinearLayoutManager(this);
-//        linearLayoutManager.setReverseLayout(true);
-//        linearLayoutManager.setStackFromEnd(true);
-//        postList.setLayoutManager(linearLayoutManager);
-//
-//        displayAllUserPost();
 
         //currentUser who is online
         if(mAuth.getCurrentUser() != null) {
@@ -171,77 +155,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-//    private void displayAllUserPost() {
-//
-//        FirebaseRecyclerOptions<Posts> options =
-//                new FirebaseRecyclerOptions.Builder<Posts>()
-//                .setQuery(postsRef ,Posts.class)
-//                .build();
-//        FirebaseRecyclerAdapter adapter = new FirebaseRecyclerAdapter<Posts,PostsViewHolder>( options) {
-//            @NonNull
-//            @Override
-//            public PostsViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-//                View view = LayoutInflater.from(viewGroup.getContext())
-//                        .inflate(R.layout.all_posts_layout,viewGroup, false);
-//                return new PostsViewHolder(view);
-//            }
-//
-//            @Override
-//            protected void onBindViewHolder(@NonNull PostsViewHolder holder, int position, @NonNull Posts model) {
-//                    holder.setFullname(model.getFullname());
-//                    holder.setTime(model.getTime());
-//                    holder.setDate(model.getDate());
-//                    holder.setDescription(model.getDescription());
-//                    holder.setProfileImage(model.getProfileImage());
-//                    holder.setTweetImage(model.getTweetImage());
-//
-//            }
-//        };
-//        adapter.startListening();
-//        postList.setAdapter(adapter);
-////        adapter.stopListening();
-//
-//
-//    }
-
-
-    public static class PostsViewHolder extends RecyclerView.ViewHolder {
-        View mView;
-        public PostsViewHolder(@NonNull View itemView) {
-            super(itemView);
-            mView= itemView;
-        }
-        public void setFullname(String fullname) {
-            TextView userName =mView.findViewById(R.id.post_user_name);
-            userName.setText(fullname);
-        }
-        public void setProfileImage ( String profileImage) {
-            CircleImageView image  =mView.findViewById(R.id.post_profile_image);
-            Picasso.get().load(profileImage).into(image);
-        }
-        public void setTime(String time) {
-            TextView postTime =mView.findViewById(R.id.post_time);
-            postTime.setText("  "+time);
-        }
-        public void setDate(String date) {
-            TextView postDate =mView.findViewById(R.id.post_date);
-            postDate.setText(date);
-        }
-        public void setDescription(String description) {
-            TextView postDecryption =mView.findViewById(R.id.post_description);
-            postDecryption.setText(description);
-        }
-        public void setTweetImage(String tweetImage) {
-            ImageView postImage  =mView.findViewById(R.id.post_image);
-            Picasso.get().load(tweetImage).into(postImage);
-        }
-    }
-
-
-    private void sendUserToPostActivity() {
-        Intent intent= new Intent(getApplicationContext(),PostActivity.class);
-        startActivity(intent);
-    }
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -348,6 +261,7 @@ public class MainActivity extends AppCompatActivity {
     private void UserMenuSelector(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.nav_profile:
+                sendUserToProfileActivity();
                 Toast.makeText(this, "Profile", LENGTH_SHORT).show();
                 break;
             case R.id.nav_lists:
@@ -370,5 +284,12 @@ public class MainActivity extends AppCompatActivity {
                 SendUserToLoginActivity();
                 break;
         }
+    }
+
+    private void sendUserToProfileActivity() {
+        Intent profileIntent =new Intent(MainActivity.this,ProfileActivity.class);
+        profileIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(profileIntent);
+        finish();
     }
 }
