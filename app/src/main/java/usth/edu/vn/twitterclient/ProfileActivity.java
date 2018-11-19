@@ -11,7 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -26,10 +25,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import usth.edu.vn.twitterclient.Profile.Likes;
-import usth.edu.vn.twitterclient.Profile.Media;
-import usth.edu.vn.twitterclient.Profile.TweetsOfProfile;
-import usth.edu.vn.twitterclient.Profile.Tweets_replies;
+import usth.edu.vn.twitterclient.profile.Likes;
+import usth.edu.vn.twitterclient.profile.Media;
+import usth.edu.vn.twitterclient.profile.TweetsOfProfile;
+import usth.edu.vn.twitterclient.profile.Tweets_replies;
 
 public class ProfileActivity extends AppCompatActivity {
     private DatabaseReference profileUserRef;

@@ -1,4 +1,4 @@
-package usth.edu.vn.twitterclient.Profile;
+package usth.edu.vn.twitterclient.profile;
 
 import android.content.Context;
 import android.net.Uri;
@@ -10,9 +10,11 @@ import android.view.ViewGroup;
 
 import usth.edu.vn.twitterclient.R;
 
-public class Tweets_replies extends Fragment {
 
-    public Tweets_replies() {
+
+public class Media extends Fragment {
+
+    public Media() {
         // Required empty public constructor
     }
 
@@ -27,7 +29,8 @@ public class Tweets_replies extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_tweets_replies, container, false);
+        return inflater.inflate(R.layout.fragment_media, container, false);
     }
+
 
 }

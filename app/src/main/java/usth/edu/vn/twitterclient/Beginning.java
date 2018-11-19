@@ -5,6 +5,8 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import usth.edu.vn.twitterclient.login.LoginActivity;
+
 public class Beginning extends AppCompatActivity {
 
     @Override

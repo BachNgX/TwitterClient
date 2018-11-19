@@ -1,15 +1,21 @@
 package usth.edu.vn.twitterclient;
 
-import android.content.Context;
-import android.net.Uri;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+
+import usth.edu.vn.twitterclient.chat.Chat;
+import usth.edu.vn.twitterclient.findpeople.FindFriendsActivity;
 
 
 public class MessageFragment extends Fragment {
+    private Button findFriend;
+    private FloatingActionButton fab;
 
     public MessageFragment() {
         // Required empty public constructor
@@ -26,6 +32,32 @@ public class MessageFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_message, container, false);
+        View view = inflater.inflate(R.layout.fragment_message, container, false);
+        findFriend= view.findViewById(R.id.button_find_friend);
+        findFriend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendUserToFindFriendsActivity();
+            }
+        });
+        fab=(FloatingActionButton) view.findViewById(R.id.fab2);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendUserToChatActivity();
+            }
+        });
+        return view;
+    }
+
+    private void sendUserToChatActivity() {
+        Intent intent2 =new Intent(getActivity(),Chat.class);
+        startActivity(intent2);
+    }
+
+    private void sendUserToFindFriendsActivity() {
+        Intent intent =new Intent(getActivity(),FindFriendsActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 }
