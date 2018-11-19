@@ -68,12 +68,12 @@ public class FindFriendsActivity extends AppCompatActivity {
     private void searchPeopleAndFriends(String searchBoxInput) {
         Toast.makeText(this,"Searching...",Toast.LENGTH_LONG).show();
 
-        Query searchPeopleandFriendsQuery = allUserDatabaseRef.orderByChild("fullname")
+        Query searchPeopleAndFriendsQuery = allUserDatabaseRef.orderByChild("fullname")
                 .startAt(searchBoxInput).endAt(searchBoxInput+ "\uf8ff");
 
         FirebaseRecyclerOptions<FindFrends> options =
                 new FirebaseRecyclerOptions.Builder<FindFrends>()
-                        .setQuery(searchPeopleandFriendsQuery ,FindFrends.class)
+                        .setQuery(searchPeopleAndFriendsQuery ,FindFrends.class)
                         .build();
         FirebaseRecyclerAdapter adapter = new FirebaseRecyclerAdapter<FindFrends,FindFriendsViewHolder>( options) {
 
@@ -101,7 +101,7 @@ public class FindFriendsActivity extends AppCompatActivity {
 
         public FindFriendsViewHolder(@NonNull View itemView) {
             super(itemView);
-            this.mView = mView;
+            this.mView = itemView;
         }
         public void setProfileImage(String profileImage) {
             CircleImageView myImage =mView.findViewById(R.id.all_users_profile_image);
