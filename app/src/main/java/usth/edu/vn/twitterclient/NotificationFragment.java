@@ -6,14 +6,31 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import usth.edu.vn.twitterclient.notification.AllofNotification;
+import usth.edu.vn.twitterclient.notification.Metions;
+import usth.edu.vn.twitterclient.profile.Likes;
+import usth.edu.vn.twitterclient.profile.Media;
+import usth.edu.vn.twitterclient.profile.TweetsOfProfile;
+import usth.edu.vn.twitterclient.profile.Tweets_replies;
+
 
 public class NotificationFragment extends Fragment {
     private FloatingActionButton fab;
+    private ViewPager viewPager;
+    private TabLayout tabLayout;
 
 
     public NotificationFragment() {
@@ -41,11 +58,56 @@ public class NotificationFragment extends Fragment {
                 sendUserToPostActivity();
             }
         });
+        viewPager = view.findViewById(R.id.viewpager_notification);
+        addTabs(viewPager);
+
+        tabLayout = view.findViewById(R.id.tabs_notification);
+        tabLayout.setupWithViewPager(viewPager);
+
         return  view;
     }
+
+
     private void sendUserToPostActivity() {
         Intent intent= new Intent(getActivity(),PostActivity.class);
         startActivity(intent);
+    }
+    private void addTabs(ViewPager viewPager) {
+//        ProfileActivity.ViewPagerAdapter adapter = new ProfileActivity.ViewPagerAdapter(getSupportFragmentManager());
+        NotificationFragment.ViewPagerAdapter adapter =new ViewPagerAdapter(getChildFragmentManager());
+        adapter.addFrag(new AllofNotification(),"All");
+        adapter.addFrag(new Metions(),"Mentions");
+        viewPager.setAdapter(adapter);
+    }
+
+    class ViewPagerAdapter extends FragmentPagerAdapter {
+        private final List<Fragment> mFragmentList = new ArrayList<>();
+        private final List<String> mFragmentTitleList = new ArrayList<>();
+
+        public ViewPagerAdapter(FragmentManager manager){
+            super(manager);
+        }
+
+        @Override
+        public Fragment getItem(int postion){
+            return mFragmentList.get(postion);
+        }
+
+        @Override
+        public int getCount() {
+            return mFragmentList.size();
+        }
+
+        public void addFrag(Fragment fragment, String title) {
+            mFragmentList.add(fragment);
+            mFragmentTitleList.add(title);
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return mFragmentTitleList.get(position);
+        }
+
     }
 
 }
