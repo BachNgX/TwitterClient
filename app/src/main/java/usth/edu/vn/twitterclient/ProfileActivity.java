@@ -12,27 +12,32 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+
 import com.squareup.picasso.Picasso;
+import com.twitter.sdk.android.core.Callback;
+import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.TwitterApiClient;
+import com.twitter.sdk.android.core.TwitterCore;
+import com.twitter.sdk.android.core.TwitterException;
+import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.sdk.android.core.identity.TwitterAuthClient;
+import com.twitter.sdk.android.core.models.User;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import retrofit2.Call;
 import usth.edu.vn.twitterclient.profile.Likes;
 import usth.edu.vn.twitterclient.profile.Media;
 import usth.edu.vn.twitterclient.profile.TweetsOfProfile;
 import usth.edu.vn.twitterclient.profile.Tweets_replies;
 
 public class ProfileActivity extends AppCompatActivity {
-    private DatabaseReference profileUserRef;
-    private FirebaseAuth mAuth;
+
+    private TwitterAuthClient client;
     private String currentUserId;
     private Toolbar mToolbar;
     private ViewPager viewPager;
@@ -40,7 +45,7 @@ public class ProfileActivity extends AppCompatActivity {
 
 
 
-    private TextView username, fullname;
+    private TextView usernameProfile, fullnameProfile;
     private CircleImageView userProfileImage;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,16 +59,12 @@ public class ProfileActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(viewPager);
 
 
-        mAuth =FirebaseAuth.getInstance();
-        currentUserId =mAuth.getCurrentUser().getUid();
-        profileUserRef =FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserId);
-
         mToolbar=findViewById(R.id.profile_toolbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("");
-
+//
 //        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View view) {
@@ -71,30 +72,61 @@ public class ProfileActivity extends AppCompatActivity {
 //            }
 //        });
 
-
-        fullname = findViewById(R.id.fullname_profile);
-        username = findViewById(R.id.username_profile);
+        fullnameProfile = findViewById(R.id.fullname_profile);
+        usernameProfile = findViewById(R.id.username_profile);
         userProfileImage = findViewById(R.id.i_profile);
-
-        profileUserRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String myFullname = dataSnapshot.child("fullname").getValue().toString();
-                String myUsername = dataSnapshot.child("username").getValue().toString();
-                String myProfileImage = dataSnapshot.child("profileImage").getValue().toString();
-
-                Picasso.get().load(myProfileImage).placeholder(R.drawable.profile).into(userProfileImage);
-                fullname.setText(myFullname);
-                username.setText(myUsername);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+        fetchTwitterImage();
+        fetchTwitterName( getTwitterSession());
 
     }
+    public void fetchTwitterName(final TwitterSession twitterSession) {
+        String username =twitterSession.getUserName();
+//        String fullname =twitterSession.getUserName();
+        usernameProfile.setText(username);
+//        fullnameProfile.setText(fullname);
+    }
+    public void fetchTwitterImage() {
+        //check if user is already authenticated or not
+        if (getTwitterSession() != null) {
+
+            //fetch twitter image with other information if user is already authenticated
+            //initialize twitter api client
+            TwitterApiClient twitterApiClient = TwitterCore.getInstance().getApiClient();
+
+            //Link for Help : https://developer.twitter.com/en/docs/accounts-and-users/manage-account-settings/api-reference/get-account-verify_credentials
+
+            //pass includeEmail : true if you want to fetch Email as well
+            Call<User> call = twitterApiClient.getAccountService().verifyCredentials(true, false, true);
+            call.enqueue(new Callback<User>() {
+                @Override
+                public void success(Result<User> result) {
+                    User user = result.data;
+                    String imageProfileUrl = user.profileImageUrl;
+                    String name= user.name;
+                    fullnameProfile.setText(name);
+                    imageProfileUrl = imageProfileUrl.replace("_normal", "");
+                    ///load image using Picasso
+                    Picasso.get()
+                            .load(imageProfileUrl)
+                            .placeholder(R.mipmap.ic_launcher_round)
+                            .into(userProfileImage);
+                }
+                @Override
+                public void failure(TwitterException exception) {
+                    Toast.makeText(ProfileActivity.this, "Failed to authenticate. Please try again.", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            //if user is not authenticated first ask user to do authentication
+            Toast.makeText(this, "First to Twitter auth to Verify Credentials.", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+    private TwitterSession getTwitterSession() {
+        TwitterSession session = TwitterCore.getInstance().getSessionManager().getActiveSession();
+        return session;
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id =  item.getItemId();
@@ -106,7 +138,6 @@ public class ProfileActivity extends AppCompatActivity {
     private void sendUserToMainActivity() {
         Intent intent = new Intent(ProfileActivity.this,MainActivity.class);
         startActivity(intent);
-
     }
 
     private void addTabs(ViewPager viewPager) {

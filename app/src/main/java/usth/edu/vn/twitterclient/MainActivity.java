@@ -16,23 +16,26 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 
 
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+
 import com.squareup.picasso.Picasso;
+import com.twitter.sdk.android.core.Callback;
+import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.TwitterApiClient;
+import com.twitter.sdk.android.core.TwitterCore;
+import com.twitter.sdk.android.core.TwitterException;
+import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.sdk.android.core.identity.TwitterAuthClient;
+import com.twitter.sdk.android.core.models.User;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import retrofit2.Call;
 import usth.edu.vn.twitterclient.login.LoginActivity;
-import usth.edu.vn.twitterclient.login.SetupActivity;
 
 import static android.widget.Toast.LENGTH_SHORT;
 
@@ -42,14 +45,15 @@ public class MainActivity extends AppCompatActivity {
     private NavigationView navigationView;
     private ActionBar toolbar;
     private BottomNavigationView bottomNavigationView;
+    private TwitterAuthClient client;
+
 
 
     private DrawerLayout drawerLayout;
    // private RecyclerView postList;
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private Toolbar mToolbar;
-    private FirebaseAuth mAuth;
-    private DatabaseReference userRef, postsRef;
+
 
     private CircleImageView navProfileImage;
     private TextView navProfileUserFullName;
@@ -57,7 +61,6 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton fab;
     private RecyclerView postList;
 
-    String currentUserId;
 
 
     @Override
@@ -65,15 +68,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        client = new TwitterAuthClient();
 
-        mAuth=FirebaseAuth.getInstance();
-        if(mAuth.getCurrentUser() != null) {
-            currentUserId = mAuth.getCurrentUser().getUid();
-
-        }
-        //check real-time database by using the user reference
-        userRef= FirebaseDatabase.getInstance().getReference().child("Users");
-        postsRef=FirebaseDatabase.getInstance().getReference().child("Posts");
 
         BottomNavigationView navigation = findViewById(R.id.nav_bottom);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -105,38 +101,8 @@ public class MainActivity extends AppCompatActivity {
         navProfileUserFullName =navView.findViewById(R.id.nav_user_fullname);
         navProfileUserName =navView.findViewById(R.id.nav_user_username);
 
-        //currentUser who is online
-        if(mAuth.getCurrentUser() != null) {
-
-            userRef.child(currentUserId).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists() && mAuth.getCurrentUser()!=null){
-                    if(dataSnapshot.hasChild("username")) {
-                        String username =dataSnapshot.child("username").getValue().toString();
-                        navProfileUserName.setText(username);
-                    }
-                    if(dataSnapshot.hasChild("fullname")) {
-                        String fullname =dataSnapshot.child("fullname").getValue().toString();
-                        navProfileUserFullName.setText(fullname);
-                    }
-                    if(dataSnapshot.hasChild("profileImage")) {
-                        String image =dataSnapshot.child("profileImage").getValue().toString();
-                        Picasso.get().load(image).placeholder(R.drawable.profile).into(navProfileImage);
-//                    Glide.with(MainActivity.this).load(image).into(navProfileImage);
-                    }
-                    else {
-                        Toast.makeText(MainActivity.this,"Profile Name do not exist..",Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });}
-
+        fetchTwitterImage();
+        fetchTwitterName( getTwitterSession());
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -145,7 +111,52 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+    public void fetchTwitterName(final TwitterSession twitterSession) {
+        String username =twitterSession.getUserName();
+        String fullname =twitterSession.getUserName();
+        navProfileUserName.setText(username);
 
+    }
+    public void fetchTwitterImage() {
+        //check if user is already authenticated or not
+        if (getTwitterSession() != null) {
+
+            //initialize twitter api client
+            TwitterApiClient twitterApiClient = TwitterCore.getInstance().getApiClient();
+
+            //Link for Help : https://developer.twitter.com/en/docs/accounts-and-users/manage-account-settings/api-reference/get-account-verify_credentials
+
+            //pass includeEmail : true if you want to fetch Email as well
+            Call<User> call = twitterApiClient.getAccountService().verifyCredentials(true, false, true);
+            call.enqueue(new Callback<User>() {
+                @Override
+                public void success(Result<User> result) {
+                    User user = result.data;
+                    String imageProfileUrl = user.profileImageUrl;
+                    String name= user.name;
+                    navProfileUserFullName.setText(name);
+                    imageProfileUrl = imageProfileUrl.replace("_normal", "");
+                    ///load image using Picasso
+                    Picasso.get()
+                            .load(imageProfileUrl)
+                            .placeholder(R.mipmap.ic_launcher_round)
+                            .into(navProfileImage);
+                }
+                @Override
+                public void failure(TwitterException exception) {
+                    Toast.makeText(MainActivity.this, "Failed to authenticate. Please try again.", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            //if user is not authenticated first ask user to do authentication
+            Toast.makeText(this, "First to Twitter auth to Verify Credentials.", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+    private TwitterSession getTwitterSession() {
+        TwitterSession session = TwitterCore.getInstance().getSessionManager().getActiveSession();
+        return session;
+    }
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -186,49 +197,7 @@ public class MainActivity extends AppCompatActivity {
         transaction.commit();
     }
 
-//basically implement a chord to check the user authentication
-    @Override
-    protected void onStart() {
-        super.onStart();
 
-        FirebaseUser currentUser= mAuth.getCurrentUser();
-        //the user is not authenticated
-        if(currentUser==null){
-            SendUserToLoginActivity();
-        }
-        else {
-            checkUserExistence();
-        }
-    }
-    @Override
-    protected void onStop() {
-        super.onStop();
-//        adapter.stopListening();
-    }
-
-    private void checkUserExistence() {
-        final String  currentUserId = mAuth.getCurrentUser().getUid();
-        userRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(!dataSnapshot.hasChild(currentUserId)){
-                    sendUserToSetupActivity();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    private void sendUserToSetupActivity() {
-        Intent setupIntent =new Intent(MainActivity.this,SetupActivity.class);
-        setupIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(setupIntent);
-        finish();
-    }
 
     private void SendUserToLoginActivity() {
         Intent loginIntent =new Intent(MainActivity.this,LoginActivity.class);
@@ -271,7 +240,6 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, "Help Center", LENGTH_SHORT).show();
                 break;
             case R.id.nav_logout:
-                mAuth.signOut();
                 SendUserToLoginActivity();
                 break;
         }

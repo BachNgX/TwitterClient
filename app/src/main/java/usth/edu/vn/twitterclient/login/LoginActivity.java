@@ -6,29 +6,35 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+
+import com.twitter.sdk.android.core.Callback;
+import com.twitter.sdk.android.core.DefaultLogger;
+import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.Twitter;
+import com.twitter.sdk.android.core.TwitterAuthConfig;
+import com.twitter.sdk.android.core.TwitterConfig;
+import com.twitter.sdk.android.core.TwitterCore;
+import com.twitter.sdk.android.core.TwitterException;
+import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.sdk.android.core.identity.TwitterAuthClient;
+import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 
 import usth.edu.vn.twitterclient.MainActivity;
 import usth.edu.vn.twitterclient.R;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private Button loginButton;
-    private EditText userEmail,userPassword;
-    private TextView needNewAccountLink;
-    private ProgressDialog loadingBar2;
-
-    private FirebaseAuth mAuth;
+    private TwitterLoginButton twitterLoginButton;
+    //twitter auth client required for custom login
+    private TwitterAuthClient client;
+    private MyPreferenceManager myPreferenceManager;
 
 
     @Override
@@ -36,89 +42,71 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        mAuth=FirebaseAuth.getInstance();
+        myPreferenceManager = new MyPreferenceManager(this);
 
-        needNewAccountLink= findViewById(R.id.register_account_link);
-        userEmail= findViewById(R.id.login_email);
-        userPassword=  findViewById(R.id.login_password);
-        loginButton =  findViewById(R.id.login_button);
-
-        needNewAccountLink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                sendUserToRegisterActivity();
-            }
-        });
-
-        //allow user login their account
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                allowingUserToLogin();
-            }
-        });
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        FirebaseUser currentUser= mAuth.getCurrentUser();
-       //the user is already login
-        if(currentUser!=null){
+        //check if user is already login or not
+        if (myPreferenceManager.getUserId() != 0) {
+            //if already login then start main activity
             sendUserToMainActivity();
+            return;
         }
+        //initialize twitter auth client
+//        client = new TwitterAuthClient();
+
+        //find the id of views
+        twitterLoginButton = findViewById(R.id.default_twitter_login_button);
+        //NOTE : calling default twitter login in OnCreate/OnResume to initialize twitter callback
+//        defaultLoginTwitter();
+        twitterLoginButton.setCallback(new Callback<TwitterSession>() {
+            @Override
+            public void success(Result<TwitterSession> result) {
+                // Do something with result, which provides a TwitterSession for making API calls
+                TwitterSession twitterSession = result.data;
+
+                //if twitter session is not null then save user data to shared preference
+                if (twitterSession != null) {
+
+                    myPreferenceManager.saveUserId(twitterSession.getUserId());//save user id
+                    myPreferenceManager.saveScreenName(twitterSession.getUserName());//save user screen name
+
+                    //after saving start main activity
+                    sendUserToMainActivity();
+
+                    //show toast
+                    Toast.makeText(LoginActivity.this, "Login Successful.", Toast.LENGTH_SHORT).show();
+                } else {
+
+                    //if twitter session is null due to some reason then show error toast
+                    Toast.makeText(LoginActivity.this, "Failed to do Login. Please try again.", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void failure(TwitterException exception) {
+                // Do something on failure
+                Toast.makeText(LoginActivity.this, "Failed to do Login. Please try again.", Toast.LENGTH_SHORT).show();
+            }
+        });
+}
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Pass the activity result to the twitterAuthClient.
+//        if (client != null)
+//            client.onActivityResult(requestCode, resultCode, data);
+
+        // Pass the activity result to the login button.
+        twitterLoginButton.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void allowingUserToLogin() {
-        String email= userEmail.getText().toString();
-        String password= userPassword.getText().toString();
-        if(TextUtils.isEmpty(email)){
-            Toast.makeText(this,"Please write your email...",Toast.LENGTH_SHORT).show();
-        }
-        else if(TextUtils.isEmpty(password)){
-            Toast.makeText(this,"Please write your password...",Toast.LENGTH_SHORT).show();
-        }
-        else{
-
-//            loadingBar2.setTitle("Login");
-//            loadingBar2.setMessage("Please wait,  While we are allowing you login into your account..");
-//            loadingBar2.show();
-//            loadingBar2.setCanceledOnTouchOutside(true);
-
-            mAuth.signInWithEmailAndPassword(email, password)
-                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if(task.isSuccessful()){
-                                sendUserToMainActivity();
-                                Toast.makeText(LoginActivity.this,"you  are logined successfully...",Toast.LENGTH_SHORT).show();
-                                //loadingBar2.dismiss();
-                            }
-                            else{
-                                String message =task.getException().getMessage();
-                                Toast.makeText(LoginActivity.this,"Error Occured"+message,Toast.LENGTH_SHORT).show();
-                                //loadingBar2.dismiss();
-                            }
-                        }
-                    });
-        }
-    }
 
     private void sendUserToMainActivity() {
         Intent mainIntent= new Intent(LoginActivity.this,MainActivity.class);
          //add the validation that is  by pressing  the back button, not allow to come back login activity unless logout
-        mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//        mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(mainIntent);
         finish();
     }
-
-
-    private void sendUserToRegisterActivity() {
-        Intent registerIntent = new Intent(LoginActivity.this,ResgisterActivity.class);
-        startActivity(registerIntent);
-        //finish();
-    }
-
 
 }

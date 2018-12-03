@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import usth.edu.vn.twitterclient.chat.Chat;
-import usth.edu.vn.twitterclient.findpeople.FindFriendsActivity;
 
 
 public class MessageFragment extends Fragment {
@@ -34,12 +33,12 @@ public class MessageFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_message, container, false);
         findFriend= view.findViewById(R.id.button_find_friend);
-        findFriend.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendUserToFindFriendsActivity();
-            }
-        });
+//        findFriend.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                sendUserToFindFriendsActivity();
+//            }
+//        });
         fab=(FloatingActionButton) view.findViewById(R.id.fab2);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,9 +54,5 @@ public class MessageFragment extends Fragment {
         startActivity(intent2);
     }
 
-    private void sendUserToFindFriendsActivity() {
-        Intent intent =new Intent(getActivity(),FindFriendsActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-    }
+
 }

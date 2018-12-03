@@ -1,16 +1,12 @@
 package usth.edu.vn.twitterclient;
 
-import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,10 +17,6 @@ import java.util.List;
 
 import usth.edu.vn.twitterclient.notification.AllofNotification;
 import usth.edu.vn.twitterclient.notification.Metions;
-import usth.edu.vn.twitterclient.profile.Likes;
-import usth.edu.vn.twitterclient.profile.Media;
-import usth.edu.vn.twitterclient.profile.TweetsOfProfile;
-import usth.edu.vn.twitterclient.profile.Tweets_replies;
 
 
 public class NotificationFragment extends Fragment {
@@ -43,7 +35,6 @@ public class NotificationFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
     }
 
     @Override
@@ -52,12 +43,12 @@ public class NotificationFragment extends Fragment {
         // Inflate the layout for this fragment
         View view =inflater.inflate(R.layout.fragment_notification, container, false);
         fab=(FloatingActionButton) view.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendUserToPostActivity();
-            }
-        });
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                sendUserToPostActivity();
+//            }
+//        });
         viewPager = view.findViewById(R.id.viewpager_notification);
         addTabs(viewPager);
 
@@ -68,10 +59,7 @@ public class NotificationFragment extends Fragment {
     }
 
 
-    private void sendUserToPostActivity() {
-        Intent intent= new Intent(getActivity(),PostActivity.class);
-        startActivity(intent);
-    }
+
     private void addTabs(ViewPager viewPager) {
 //        ProfileActivity.ViewPagerAdapter adapter = new ProfileActivity.ViewPagerAdapter(getSupportFragmentManager());
         NotificationFragment.ViewPagerAdapter adapter =new ViewPagerAdapter(getChildFragmentManager());
