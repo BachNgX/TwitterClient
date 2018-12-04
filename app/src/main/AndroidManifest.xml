@@ -28,6 +28,7 @@
         </activity>
         <activity android:name=".ProfileActivity" />
         <activity android:name=".chat.Chat" />
+
         <activity android:name=".TweetActivity" />
 
         <provider
@@ -49,6 +50,7 @@
                 <action android:name="com.twitter.sdk.android.tweetcomposer.TWEET_COMPOSE_CANCEL" />
             </intent-filter>
         </receiver>
+
     </application>
 
 </manifest>

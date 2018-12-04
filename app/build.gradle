@@ -46,7 +46,9 @@ dependencies {
     //include only the necessary dependencies to avoid the Android dex limit
     implementation 'com.twitter.sdk.android:twitter-core:3.1.1'
     implementation 'com.twitter.sdk.android:tweet-ui:3.1.1'
+
     implementation 'com.twitter.sdk.android:tweet-composer:3.1.1'
+
 
 
 

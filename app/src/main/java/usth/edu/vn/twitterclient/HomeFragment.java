@@ -56,12 +56,20 @@ public class HomeFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         fab =  view.findViewById(R.id.fab);
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 sendUserToTweetActivity();
             }
         });
+
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                sendUserToPostActivity();
+//            }
+//        });
 //        postList = view.findViewById(R.id.user_timeline_recycler_view);
 //        postList.setHasFixedSize(true);
 //        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
@@ -73,10 +81,12 @@ public class HomeFragment extends Fragment {
 
     }
 
+
     private void sendUserToTweetActivity() {
         Intent intent3 =new Intent(getActivity(),TweetActivity.class);
         startActivity(intent3);
     }
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
