@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ResgisterActivity">
+    tools:context=".login.ResgisterActivity">
 
     <EditText
         android:id="@+id/register_email"
@@ -12,7 +12,8 @@
         android:layout_height="60dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="144dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="155dp"
         android:drawableLeft="@drawable/email"
         android:ems="10"
         android:hint="Email..."
@@ -25,9 +26,9 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="1dp"
-        android:layout_marginLeft="1dp"
-        android:layout_marginTop="244dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="243dp"
         android:drawableLeft="@drawable/password"
         android:ems="10"
         android:hint="Password..."
@@ -35,15 +36,15 @@
 
     <EditText
         android:id="@+id/register_confirm_password"
-        android:layout_width="383dp"
+        android:layout_width="match_parent"
         android:layout_height="63dp"
         android:layout_alignStart="@+id/login_password"
-        android:layout_alignParentBottom="true"
+        android:layout_alignParentTop="true"
+
         android:layout_marginStart="0dp"
-        android:layout_marginBottom="169dp"
+        android:layout_marginTop="330dp"
         android:drawableLeft="@drawable/password"
         android:ems="10"
-
         android:hint="Confirm Password..."
         android:inputType="textPassword" />
 
@@ -72,8 +73,8 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="113dp"
-        android:layout_marginLeft="113dp"
+        android:layout_marginStart="123dp"
+        android:layout_marginLeft="123dp"
         android:layout_marginTop="24dp"
-        app:srcCompat="@drawable/logo" />
+        app:srcCompat="@drawable/twitter" />
 </RelativeLayout>
